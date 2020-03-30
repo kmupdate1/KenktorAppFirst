@@ -24,6 +24,14 @@ fun Application.module(testing: Boolean = false) {
             call.respondText("HELLO WORLD!", contentType = ContentType.Text.Plain)
         }
 
+        get("/ken") {
+            call.respondText("Hi, I'm Ken. Nice to meet you today.")
+        }
+
+        get("/ken/ken") {
+            call.respondText("Hi, I'm Ken. Nice to meet you today.\nHi, I'm Ken. Nice to meet you today.")
+        }
+
         get("/html-dsl") {
             call.respondHtml {
                 body {
