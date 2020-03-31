@@ -2,7 +2,6 @@ package ken.ktorapp.first
 
 import io.ktor.application.*
 import io.ktor.response.*
-import io.ktor.request.*
 import io.ktor.routing.*
 import io.ktor.http.*
 import io.ktor.html.*
@@ -10,6 +9,10 @@ import kotlinx.html.*
 import kotlinx.css.*
 import io.ktor.client.*
 import io.ktor.client.engine.apache.*
+import io.ktor.http.cio.websocket.*
+import io.ktor.websocket.WebSockets
+import io.ktor.websocket.webSocket
+import java.time.Duration
 
 fun main(args: Array<String>): Unit = io.ktor.server.netty.EngineMain.main(args)
 
@@ -58,6 +61,28 @@ fun Application.module(testing: Boolean = false) {
                 }
             }
         }
+
+        webSocket("/web-socket") {
+            for ( frame in incoming ) {
+                when ( frame ) {
+                    is Frame.Text -> {
+                        val text = frame.readText()
+                        outgoing.send(Frame.Text("You said : $text"))
+                        if ( text.equals("bye", ignoreCase = true ) ) {
+                            close(CloseReason(CloseReason.Codes.NORMAL, "Client said BYE"))
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    install(WebSockets) {
+        pingPeriod = Duration.ofSeconds(60)
+        timeout = Duration.ofSeconds(15)
+        maxFrameSize = Long.MAX_VALUE
+
+        masking = false
     }
 }
 
