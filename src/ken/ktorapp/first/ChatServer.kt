@@ -12,16 +12,12 @@ import java.util.concurrent.atomic.AtomicInteger
 
 class ChatServer {
     val usersCounter = AtomicInteger()
-
     val memberNames = ConcurrentHashMap<String, String>()
-
     val members = ConcurrentHashMap<String, MutableList<WebSocketSession>>()
-
     val lastMessages = LinkedList<String>()
 
     suspend fun memberJoin(member: String, socket: WebSocketSession) {
         val name = memberNames.computeIfAbsent(member) { "user${usersCounter.incrementAndGet()}" }
-
         val list = members.computeIfAbsent(member) { CopyOnWriteArrayList<WebSocketSession>() }
 
         if ( list.size == 1 ) {
@@ -29,6 +25,7 @@ class ChatServer {
         }
 
         val messages = synchronized(lastMessages) { lastMessages.toList() }
+
         for ( message in lastMessages ) {
             socket.send(Frame.Text(message))
         }

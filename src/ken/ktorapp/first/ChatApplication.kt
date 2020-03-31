@@ -42,6 +42,7 @@ class ChatApplication {
                 call.sessions.set(ChatSession(generateNonce()))
             }
         }
+
         routing {
             webSocket("/ws") {
                 val session = call.sessions.get<ChatSession>()
@@ -72,8 +73,6 @@ class ChatApplication {
         }
     }
 
-    data class ChatSession(val id: String)
-
     private suspend fun receiveMessage(id: String, command: String) {
         when {
             command.startsWith("/who") -> server.who(id)
@@ -98,8 +97,8 @@ class ChatApplication {
                 "server::help",
                 "Unknown command ${command.takeWhile { !it.isWhitespace() }}"
             )
-
             else -> server.message(id, command)
         }
     }
+    data class ChatSession(val id: String)
 }
