@@ -13,7 +13,7 @@ apply plugin: 'application'
 
 group 'ken.ktorapp.first'
 version '0.0.1'
-mainClassName = "io.ktor.server.netty.EngineMain"
+mainClassName = "ken.ktorapp.first.ChatApplication.main"
 
 sourceSets {
     main.kotlin.srcDirs = main.java.srcDirs = ['src']
